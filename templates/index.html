@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en" class="transition-colors duration-500 dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- ✅ SEO Meta Tags -->
+    <title>Anime Recommendations | Best Anime List & Suggestions</title>
+    <meta name="description"
+        content="Discover top-rated anime recommendations. Explore genres, ratings, and personalized suggestions for anime like Naruto, One Piece, and more.">
+    <meta name="keywords"
+        content="anime recommendations, best anime list, top anime, Naruto, One Piece, Demon Slayer, anime genres">
+    <meta name="author" content="Harsh baheti">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://yourwebsite.com/">
+
+    <!-- ✅ Open Graph for Social Sharing -->
+    <meta property="og:title" content="Anime Recommendations - Best Anime List & Suggestions">
+    <meta property="og:description"
+        content="Explore top anime recommendations by rating, genre, and popularity. Search and discover new anime today!">
+    <meta property="og:image" content="https://yourwebsite.com/preview-image.jpg">
+    <meta property="og:url" content="https://yourwebsite.com">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary_large_image">
+
+    <!-- ✅ TailwindCSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class'
+        }
+    </script>
+
+    <!-- ✅ Animations -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+
+    <!-- ✅ Custom Glass Style -->
+    <style>
+        .glass-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .dark .glass-card {
+            background: rgba(30, 30, 30, 0.85);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* ✅ Custom Scrollbar */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background-color: rgba(100, 100, 255, 0.5);
+            border-radius: 4px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+    </style>
+
+    <!-- ✅ Structured Data (Schema for Anime) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "ItemList",
+      "itemListElement": [
+        {
+          "@type": "CreativeWorkSeries",
+          "name": "Naruto",
+          "genre": ["Action", "Adventure"],
+          "aggregateRating": {
+            "@type": "AggregateRating",
+            "ratingValue": "8.5",
+            "bestRating": "10",
+            "ratingCount": "500000"
+          }
+        }
+      ]
+    }
+    </script>
+</head>
+
+<body
+    class="bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-900 dark:to-gray-800 text-gray-900 dark:text-gray-100 min-h-screen flex flex-col items-center p-6 transition-colors duration-500">
+    <div class="w-full max-w-5xl">
+        <!-- ✅ Header with Dark Mode Toggle -->
+        <header class="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-8 gap-4">
+            <h1 class="text-2xl sm:text-3xl font-extrabold tracking-wide text-center sm:text-left">
+                ✨ Anime Recommendations
+            </h1>
+            <button id="darkToggle" aria-label="Toggle Dark Mode"
+                class="px-4 py-2 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-lg shadow hover:scale-105 transition w-full sm:w-auto">
+                🌙 Toggle Dark Mode
+            </button>
+        </header>
+
+
+        <!-- ✅ Search Bar -->
+        <div class="relative">
+            <input type="text" id="searchInput" placeholder="🔍 Search Anime..."
+                class="w-full p-3 border border-gray-300 rounded-xl shadow focus:outline-none focus:ring-2 focus:ring-indigo-400 dark:bg-gray-800 dark:border-gray-600">
+            <!-- ✅ Suggestions -->
+            <ul id="suggestions"
+                class="absolute left-0 right-0 mt-2 border rounded-lg bg-white dark:bg-gray-800 shadow-lg hidden animate__animated animate__fadeIn animate__faster z-10">
+            </ul>
+        </div>
+
+        <!-- ✅ Cards Section -->
+        <main>
+            <h2 class="text-xl font-bold mt-6 mb-4">🔥 Top Rated Anime</h2>
+            <section id="cards" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6"></section>
+        </main>
+    </div>
+
+    <!-- ✅ Modal -->
+    <div id="modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="glass-card p-6 rounded-2xl max-w-lg w-full shadow-2xl animate__animated animate__zoomIn">
+            <h2 id="modalTitle" class="text-2xl font-bold mb-3"></h2>
+            <img id="modalImage" class="w-full h-60 object-cover rounded-xl mb-4" alt="Anime Cover">
+            <p id="modalGenres" class="text-sm text-gray-600 dark:text-gray-400 mb-4"></p>
+
+            <div class="max-h-40 overflow-y-auto pr-2 custom-scrollbar mb-2">
+                <p id="modalSynopsis" class="text-gray-700 dark:text-gray-300"></p>
+            </div>
+            <button id="closeModal"
+                class="w-full bg-gradient-to-r from-indigo-500 to-purple-600 text-white py-2 rounded-xl hover:scale-105 transition">
+                Close
+            </button>
+        </div>
+    </div>
+
+    <!-- ✅ JavaScript -->
+    <script>
+        const searchInput = document.getElementById('searchInput');
+        const suggestionsBox = document.getElementById('suggestions');
+        const cardsContainer = document.getElementById('cards');
+        const modal = document.getElementById('modal');
+        const closeModal = document.getElementById('closeModal');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalImage = document.getElementById('modalImage');
+        const modalSynopsis = document.getElementById('modalSynopsis');
+        const modalGenres = document.getElementById('modalGenres');
+        const darkToggle = document.getElementById('darkToggle');
+
+        let timeout = null;
+
+        // ✅ Dark mode toggle
+        darkToggle.addEventListener('click', () => {
+            document.documentElement.classList.toggle('dark');
+        });
+
+        // ✅ Load Top Rated Anime on Page Load
+        document.addEventListener('DOMContentLoaded', () => {
+            fetch('/top-anime')
+                .then(res => res.json())
+                .then(data => renderCards(data));
+        });
+
+        // ✅ Search and Suggestions
+        searchInput.addEventListener('input', () => {
+            clearTimeout(timeout);
+            const query = searchInput.value.trim();
+            if (query.length === 0) {
+                suggestionsBox.innerHTML = '';
+                suggestionsBox.classList.add('hidden');
+                return;
+            }
+            timeout = setTimeout(() => {
+                fetch(`/search?query=${query}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        suggestionsBox.innerHTML = '';
+                        if (data.length > 0) {
+                            suggestionsBox.classList.remove('hidden');
+                            data.forEach(anime => {
+                                const li = document.createElement('li');
+                                li.className = 'p-3 hover:bg-indigo-100 dark:hover:bg-indigo-700 cursor-pointer transition-all';
+                                li.textContent = anime.Name;
+                                li.onclick = () => selectAnime(anime);
+                                suggestionsBox.appendChild(li);
+                            });
+                        } else {
+                            suggestionsBox.classList.add('hidden');
+                        }
+                    });
+            }, 300);
+        });
+
+        // ✅ Display Cards
+        function renderCards(data) {
+            cardsContainer.innerHTML = '';
+            data.forEach(a => {
+                const card = document.createElement('article');
+                card.className = 'glass-card rounded-2xl shadow-xl overflow-hidden flex flex-col justify-between transform hover:scale-105 transition duration-300 animate__animated animate__fadeInUp';
+                card.innerHTML = `
+                  <img src="${a.Image_source}" loading="lazy" alt="Cover image of ${a.Name}" class="w-full h-48 object-cover">
+                  <div class="p-4 flex flex-col flex-grow">
+                      <div class="flex-grow">
+                          <h2 class="text-lg font-semibold mb-1">${a.Name}</h2>
+                          <p class="text-gray-500 dark:text-gray-400 mb-1">⭐ ${a.Rating}</p>
+                          <div class="flex flex-wrap gap-2 mb-3">
+                              ${JSON.parse(a.Genres.replace(/'/g, '"')).map(g => `
+                                  <span class="px-3 py-1 text-xs bg-indigo-100 dark:bg-indigo-700 text-indigo-700 dark:text-indigo-100 rounded-full font-medium">
+                                      ${g}
+                                  </span>
+                              `).join('')}
+                          </div>
+                      </div>
+                      <button class="mt-auto w-full bg-gradient-to-r from-indigo-500 to-purple-600 text-white py-2 rounded-lg hover:scale-105 transition view-details">View Details</button>
+                  </div>
+                `;
+                card.querySelector('.view-details').addEventListener('click', () => {
+                    modalTitle.textContent = a.Name;
+                    modalImage.src = a.Image_source;
+                    modalSynopsis.textContent = (a.Synopsis?.replace(/—/g, "-")) || "No synopsis available.";
+                    modalGenres.textContent = `Genres: ${JSON.parse(a.Genres.replace(/'/g, '"')).join(', ')}`;
+                    modal.classList.remove('hidden');
+                });
+                cardsContainer.appendChild(card);
+            });
+        }
+
+        // ✅ Select Anime and Load Recommendations
+        function selectAnime(anime) {
+            searchInput.value = anime.Name;
+            suggestionsBox.classList.add('hidden');
+            fetch(`/recommendations/${anime.id}`)
+                .then(res => res.json())
+                .then(data => {
+                    document.querySelector('h2').textContent = '🎯 Recommended for You';
+                    renderCards(data);
+                });
+        }
+
+        // ✅ Close Modal
+        closeModal.addEventListener('click', () => {
+            modal.classList.add('hidden');
+        });
+    </script>
+</body>
+
+</html>
