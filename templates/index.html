@@ -6,17 +6,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <!-- ✅ SEO Meta Tags -->
-    <title>Anime Recommendations | Best Anime List & Suggestions</title>
+    <title>My Anime Recommendations | Best Anime List & Suggestions</title>
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}">
+
     <meta name="description"
         content="Discover top-rated anime recommendations. Explore genres, ratings, and personalized suggestions for anime like Naruto, One Piece, and more.">
     <meta name="keywords"
-        content="anime recommendations, best anime list, top anime, Naruto, One Piece, Demon Slayer, anime genres">
+        content="my anime recommendations,anime recommendations, best anime list, top anime, Naruto, One Piece, Demon Slayer, anime genres">
     <meta name="author" content="Harsh baheti">
     <meta name="robots" content="index, follow">
     <link rel="canonical" href="https://yourwebsite.com/">
 
     <!-- ✅ Open Graph for Social Sharing -->
-    <meta property="og:title" content="Anime Recommendations - Best Anime List & Suggestions">
+    <meta property="og:title" content="My Anime Recommendations - Best Anime List & Suggestions">
     <meta property="og:description"
         content="Explore top anime recommendations by rating, genre, and popularity. Search and discover new anime today!">
     <meta property="og:image" content="https://yourwebsite.com/preview-image.jpg">
@@ -90,13 +92,18 @@
     <div class="w-full max-w-5xl">
         <!-- ✅ Header with Dark Mode Toggle -->
         <header class="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-8 gap-4">
-            <h1 class="text-2xl sm:text-3xl font-extrabold tracking-wide text-center sm:text-left">
-                ✨ Anime Recommendations
+            <h1
+                class="flex items-center gap-2  text-2xl sm:text-3xl font-extrabold tracking-wide text-center sm:text-left">
+                <img class="w-12 h-12 sm:w-12 sm:h-12 object-contain"
+                    src="{{ url_for('static', filename='naruto.png') }}">My Anime Recommendations
             </h1>
-            <button id="darkToggle" aria-label="Toggle Dark Mode"
-                class="px-4 py-2 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-lg shadow hover:scale-105 transition w-full sm:w-auto">
-                🌙 Toggle Dark Mode
+            <button id="darkToggle" aria-label="Toggle Dark Mode" class="relative overflow-hidden px-5 py-2.5 bg-gradient-to-r from-indigo-500 via-purple-600 to-pink-600 
+           text-white font-semibold rounded-full shadow-lg 
+           hover:scale-105 transition transform w-full sm:w-auto">
+                <span id="darkIcon" class="inline-block transition-transform duration-300">☀️</span>
+                <span id="darkText" class="ml-2">Switch to Light</span>
             </button>
+
         </header>
 
 
@@ -145,14 +152,14 @@
         const modalImage = document.getElementById('modalImage');
         const modalSynopsis = document.getElementById('modalSynopsis');
         const modalGenres = document.getElementById('modalGenres');
-        const darkToggle = document.getElementById('darkToggle');
+        // const darkToggle = document.getElementById('darkToggle');
 
         let timeout = null;
 
-        // ✅ Dark mode toggle
-        darkToggle.addEventListener('click', () => {
-            document.documentElement.classList.toggle('dark');
-        });
+        // // ✅ Dark mode toggle
+        // darkToggle.addEventListener('click', () => {
+        //     document.documentElement.classList.toggle('dark');
+        // });
 
         // ✅ Load Top Rated Anime on Page Load
         document.addEventListener('DOMContentLoaded', () => {
@@ -240,6 +247,58 @@
         // ✅ Close Modal
         closeModal.addEventListener('click', () => {
             modal.classList.add('hidden');
+        });
+    </script>
+
+    <script>
+        const toggleBtn = document.getElementById("darkToggle");
+        const icon = document.getElementById("darkIcon");
+        const text = document.getElementById("darkText");
+
+        // ✅ Force default mode to DARK on load
+        document.documentElement.classList.add("dark");
+
+        toggleBtn.addEventListener("click", function (e) {
+            const isDark = document.documentElement.classList.toggle("dark");
+
+            if (isDark) {
+                // Dark mode active
+                icon.textContent = "☀️";
+                text.textContent = "Switch to Light";
+                toggleBtn.className = "relative overflow-hidden px-5 py-2.5 bg-gradient-to-r from-indigo-500 via-purple-600 to-pink-600 text-white font-semibold rounded-full shadow-lg hover:scale-105 transition transform w-full sm:w-auto";
+            } else {
+                // Light mode active
+                icon.textContent = "🌙";
+                text.textContent = "Switch to Dark";
+                toggleBtn.className = "relative overflow-hidden px-5 py-2.5 bg-gradient-to-r from-red-500 via-orange-500 to-yellow-400 text-gray-900 font-semibold rounded-full shadow-lg hover:scale-105 transition transform w-full sm:w-auto";
+            }
+
+            // Bubble ripple effect
+            const circle = document.createElement("span");
+            const rect = toggleBtn.getBoundingClientRect();
+            const size = Math.max(rect.width, rect.height);
+            const x = e.clientX - rect.left - size / 2;
+            const y = e.clientY - rect.top - size / 2;
+
+            circle.style.position = "absolute";
+            circle.style.borderRadius = "50%";
+            circle.style.background = "rgba(255,255,255,0.4)";
+            circle.style.width = circle.style.height = `${size}px`;
+            circle.style.left = `${x}px`;
+            circle.style.top = `${y}px`;
+            circle.style.transform = "scale(0)";
+            circle.style.opacity = "0.8";
+            circle.style.pointerEvents = "none";
+            circle.style.transition = "transform 0.5s ease-out, opacity 0.8s ease-out";
+
+            toggleBtn.appendChild(circle);
+
+            requestAnimationFrame(() => {
+                circle.style.transform = "scale(2.5)";
+                circle.style.opacity = "0";
+            });
+
+            circle.addEventListener("transitionend", () => circle.remove());
         });
     </script>
 </body>
