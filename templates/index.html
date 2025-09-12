@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <!-- ✅ SEO Meta Tags -->
+    <!--   SEO Meta Tags -->
     <title>My Anime Recommendations | Best Anime List & Suggestions</title>
     <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}">
 
@@ -17,7 +17,7 @@
     <meta name="robots" content="index, follow">
     <link rel="canonical" href="https://yourwebsite.com/">
 
-    <!-- ✅ Open Graph for Social Sharing -->
+    <!--   Open Graph for Social Sharing -->
     <meta property="og:title" content="My Anime Recommendations - Best Anime List & Suggestions">
     <meta property="og:description"
         content="Explore top anime recommendations by rating, genre, and popularity. Search and discover new anime today!">
@@ -26,7 +26,7 @@
     <meta property="og:type" content="website">
     <meta name="twitter:card" content="summary_large_image">
 
-    <!-- ✅ TailwindCSS -->
+    <!--   TailwindCSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -34,10 +34,10 @@
         }
     </script>
 
-    <!-- ✅ Animations -->
+    <!--   Animations -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
 
-    <!-- ✅ Custom Glass Style -->
+    <!--   Custom Glass Style -->
     <style>
         .glass-card {
             background: rgba(255, 255, 255, 0.85);
@@ -50,7 +50,7 @@
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        /* ✅ Custom Scrollbar */
+        /*   Custom Scrollbar */
         .custom-scrollbar::-webkit-scrollbar {
             width: 8px;
         }
@@ -65,7 +65,7 @@
         }
     </style>
 
-    <!-- ✅ Structured Data (Schema for Anime) -->
+    <!--   Structured Data (Schema for Anime) -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -90,7 +90,7 @@
 <body
     class="bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-900 dark:to-gray-800 text-gray-900 dark:text-gray-100 min-h-screen flex flex-col items-center p-6 transition-colors duration-500">
     <div class="w-full max-w-5xl">
-        <!-- ✅ Header with Dark Mode Toggle -->
+        <!--   Header with Dark Mode Toggle -->
         <header class="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-8 gap-4">
             <h1
                 class="flex items-center gap-2  text-2xl sm:text-3xl font-extrabold tracking-wide text-center sm:text-left">
@@ -107,24 +107,24 @@
         </header>
 
 
-        <!-- ✅ Search Bar -->
+        <!--   Search Bar -->
         <div class="relative">
             <input type="text" id="searchInput" placeholder="🔍 Search Anime..."
                 class="w-full p-3 border border-gray-300 rounded-xl shadow focus:outline-none focus:ring-2 focus:ring-indigo-400 dark:bg-gray-800 dark:border-gray-600">
-            <!-- ✅ Suggestions -->
+            <!--   Suggestions -->
             <ul id="suggestions"
                 class="absolute left-0 right-0 mt-2 border rounded-lg bg-white dark:bg-gray-800 shadow-lg hidden animate__animated animate__fadeIn animate__faster z-10">
             </ul>
         </div>
 
-        <!-- ✅ Cards Section -->
+        <!--   Cards Section -->
         <main>
             <h2 class="text-xl font-bold mt-6 mb-4">🔥 Top Rated Anime</h2>
             <section id="cards" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6"></section>
         </main>
     </div>
 
-    <!-- ✅ Modal -->
+    <!--   Modal -->
     <div id="modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
         <div class="glass-card p-6 rounded-2xl max-w-lg w-full shadow-2xl animate__animated animate__zoomIn">
             <h2 id="modalTitle" class="text-2xl font-bold mb-3"></h2>
@@ -141,7 +141,7 @@
         </div>
     </div>
 
-    <!-- ✅ JavaScript -->
+    <!--   JavaScript -->
     <script>
         const searchInput = document.getElementById('searchInput');
         const suggestionsBox = document.getElementById('suggestions');
@@ -152,23 +152,18 @@
         const modalImage = document.getElementById('modalImage');
         const modalSynopsis = document.getElementById('modalSynopsis');
         const modalGenres = document.getElementById('modalGenres');
-        // const darkToggle = document.getElementById('darkToggle');
 
         let timeout = null;
 
-        // // ✅ Dark mode toggle
-        // darkToggle.addEventListener('click', () => {
-        //     document.documentElement.classList.toggle('dark');
-        // });
 
-        // ✅ Load Top Rated Anime on Page Load
+        //   Load Top Rated Anime on Page Load
         document.addEventListener('DOMContentLoaded', () => {
             fetch('/top-anime')
                 .then(res => res.json())
                 .then(data => renderCards(data));
         });
 
-        // ✅ Search and Suggestions
+        //   Search and Suggestions
         searchInput.addEventListener('input', () => {
             clearTimeout(timeout);
             const query = searchInput.value.trim();
@@ -198,7 +193,22 @@
             }, 300);
         });
 
-        // ✅ Display Cards
+
+        document.addEventListener('click', (e) => {
+            if (!suggestionsBox.contains(e.target) && e.target !== searchInput) {
+                suggestionsBox.classList.add('hidden');
+            }
+        });
+        searchInput.addEventListener("keydown", (event) => {
+            if (event.key === "Escape") {
+                suggestionsBox.classList.add("hidden");
+                searchInput.blur(); // optional: also remove focus from input
+            }
+        });
+
+
+
+        //   Display Cards
         function renderCards(data) {
             cardsContainer.innerHTML = '';
             data.forEach(a => {
@@ -232,7 +242,7 @@
             });
         }
 
-        // ✅ Select Anime and Load Recommendations
+        //   Select Anime and Load Recommendations
         function selectAnime(anime) {
             searchInput.value = anime.Name;
             suggestionsBox.classList.add('hidden');
@@ -244,7 +254,7 @@
                 });
         }
 
-        // ✅ Close Modal
+        //   Close Modal
         closeModal.addEventListener('click', () => {
             modal.classList.add('hidden');
         });
@@ -255,7 +265,7 @@
         const icon = document.getElementById("darkIcon");
         const text = document.getElementById("darkText");
 
-        // ✅ Force default mode to DARK on load
+        //   Force default mode to DARK on load
         document.documentElement.classList.add("dark");
 
         toggleBtn.addEventListener("click", function (e) {
